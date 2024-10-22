@@ -13,7 +13,7 @@ class OrderController {
 
     @PostMapping(value = ["/order"])
     fun createOrder(@RequestBody order: Order): ResponseEntity<Response> {
-        orderService.createOrder(order)
+
 
         var sum: Double = 0.0
         order.items.forEach { item ->
@@ -26,7 +26,22 @@ class OrderController {
                 sum += (billedQuantity * 0.25)
             }
         }
+        val os = OrderToStore(order.id, order.items, sum)
+        orderService.createOrder(os)
         val response = Response(sum, order.items)
         return ResponseEntity(response, HttpStatus.CREATED)
     }
+
+    @GetMapping(value = ["/order/{id}"])
+    fun getOrder(@PathVariable id: Int): ResponseEntity<Any> {
+        val order = orderService.getOrder(id)
+        return if (order != null)
+            ResponseEntity(order, HttpStatus.OK)
+        else
+            ResponseEntity(ErrorResponse("Order Not Found", "order '$id' not found"), HttpStatus.NOT_FOUND)
+    }
+
+    @GetMapping(value = ["/orders"])
+    fun getOrders() =
+        orderService.getOrders()
 }
