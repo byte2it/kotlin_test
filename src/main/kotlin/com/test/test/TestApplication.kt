@@ -12,5 +12,3 @@ fun main(args: Array<String>) {
 	runApplication<TestApplication>(*args)
 }
 
-@Bean
-fun orders() = ConcurrentHashMap<Int, Order>()

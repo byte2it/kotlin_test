@@ -1,12 +1,9 @@
 package com.test.test
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.util.concurrent.ConcurrentHashMap
 
 @RestController
 class OrderController {
@@ -15,16 +12,18 @@ class OrderController {
 
 
     @PostMapping(value = ["/order"])
-    fun createCustomer(@RequestBody order: Order): ResponseEntity<Response> {
+    fun createOrder(@RequestBody order: Order): ResponseEntity<Response> {
         orderService.createOrder(order)
 
         var sum: Double = 0.0
         order.items.forEach { item ->
             if (item.product == "apple"){
-               sum += (item.quantity * 0.6)
+                val billedQuantity = item.quantity.rem(2) + (item.quantity/2)
+               sum += (billedQuantity * 0.60)
             }
             else if (item.product == "orange"){
-                sum += (item.quantity * 0.25)
+                val billedQuantity = item.quantity.rem(3) + ((item.quantity/3) * 2)
+                sum += (billedQuantity * 0.25)
             }
         }
         val response = Response(sum, order.items)
